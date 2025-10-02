@@ -22,13 +22,13 @@ export const writePrismaEnum = (
   }
 
   if (useNativeEnum) {
-    writer.blankLine().write(`export const ${name}Schema = z.enum([`);
-    values.forEach((value, idx) => {
-      const writeComma = idx !== values.length - 1;
-
-      writer.write(`'${value}'${writeComma ? ',' : ''}`);
+    writer.blankLine().write(`export enum ${name} {`);
+    values.forEach((value) => {
+      writer.write(`${value} = '${value}',`);
     });
-    writer.write(`]);`);
+    writer.write(`}`);
+    writer.blankLine().write(`export const ${name}Schema = z.nativeEnum(${name});`);
+    writer.blankLine().write(`export type ${name}Type = z.infer<typeof ${name}Schema>;`);
   } else {
     if (name === 'JsonNullValueInput') {
       writer
