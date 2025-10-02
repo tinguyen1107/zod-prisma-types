@@ -18,7 +18,7 @@ export const writeCustomEnum = (
 
   writer.blankLine().write(`export enum ${name} {`);
   values.forEach((value) => {
-    writer.write(`${value} = '${value}',`);
+    writer.write(`${value.name} = '${value.name}',`);
   });
   writer.write(`}`);
   writer.blankLine().write(`export const ${name}Schema = z.nativeEnum(${name});`);
