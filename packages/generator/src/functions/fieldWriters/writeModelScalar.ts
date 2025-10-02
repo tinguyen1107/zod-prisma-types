@@ -24,7 +24,7 @@ export const writeScalar = ({
   if (field.isTopLevelValidator) {
     writer
       .write(`${field.name}: `)
-      .write(`z`)
+      .write(`z.${field.zodType}()`)
       .conditionalWrite(!!field.zodValidatorString, field.zodValidatorString!);
 
     return writeFieldAdditions({ writer, field, writeOptionalDefaults });
