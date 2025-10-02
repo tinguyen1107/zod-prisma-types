@@ -16,17 +16,13 @@ export const writeCustomEnum = (
     writeZodImport(writeImport);
   }
 
-  writer.blankLine().write(`export const ${name}Schema = z.enum([`);
-  values.forEach((value, idx) => {
-    const writeComma = idx !== values.length - 1;
-    writer.write(`'${value.name}'${writeComma ? ',' : ''}`);
+  writer.blankLine().write(`export enum ${name} {`);
+  values.forEach((value) => {
+    writer.write(`${value} = '${value}',`);
   });
-  writer
-    .write(`]);`)
-    .blankLine()
-    .writeLine(
-      `export type ${name}Type = \`\${z.infer<typeof ${name}Schema>}\``,
-    );
+  writer.write(`}`);
+  writer.blankLine().write(`export const ${name}Schema = z.nativeEnum(${name});`);
+  writer.blankLine().write(`export type ${name}Type = z.infer<typeof ${name}Schema>;`);
 
   if (useMultipleFiles && !getSingleFileContent) {
     writer.blankLine().writeLine(`export default ${name}Schema;`);

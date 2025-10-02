@@ -112,7 +112,7 @@ export const writePrismaEnum = (
 
       return;
     }
-
+    
     writer
       // .conditionalWrite(
       //   useMultipleFiles && name.includes('NullableJson'),
