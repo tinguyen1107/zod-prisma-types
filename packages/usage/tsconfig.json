@@ -33,5 +33,6 @@
     "useUnknownInCatchVariables": true,
     "types": ["vitest/globals"]
   },
-  "include": ["prisma/generated/zod/**/*.ts", "src/**/*.ts"]
+  "include": ["prisma/generated/zod/**/*.ts"]
+  // "exclude": ["node_modules", "dist", "prisma/generated/client/**/*.ts"]
 }

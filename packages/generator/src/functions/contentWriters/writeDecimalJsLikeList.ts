@@ -18,11 +18,6 @@ export const writeDecimalJsLikeList = ({
     writeZodImport(writeImport);
     if (isPrismaClientGenerator && prismaVersion?.major === 6) {
       writeImport('type { DecimalJsLike }', `${prismaLibraryPath}`);
-    } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-      writeImport(
-        'type { DecimalJsLike }',
-        `${prismaClientPath}/runtime/library`,
-      );
     } else {
       writeImport('type { Prisma }', `${prismaClientPath}`);
     }
@@ -31,8 +26,6 @@ export const writeDecimalJsLikeList = ({
   let decimalJsLikeListTypeName = '';
 
   if (isPrismaClientGenerator && prismaVersion?.major === 6) {
-    decimalJsLikeListTypeName = 'DecimalJsLike';
-  } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
     decimalJsLikeListTypeName = 'DecimalJsLike';
   } else {
     decimalJsLikeListTypeName = 'Prisma.DecimalJsLike';

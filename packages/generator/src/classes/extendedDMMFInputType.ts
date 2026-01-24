@@ -189,16 +189,15 @@ export class ExtendedDMMFInputType
         prismaImports.push(
           `import { Decimal as PrismaDecimal } from '${prismaLibraryPath}';`,
         );
-      } else if (isPrismaClientGenerator && prismaVersion?.major === 7) {
-        prismaImports.push(
-          `import { Decimal as PrismaDecimal } from '${prismaClientPath}/runtime/library';`,
-        );
       } else {
         prismaImports.push(`import { Prisma } from '${prismaClientPath}';`);
       }
     }
 
-    if (!this.isDecimalField || isPrismaClientGenerator) {
+    if (
+      !this.isDecimalField ||
+      (isPrismaClientGenerator && (prismaVersion?.major ?? 0) === 6)
+    ) {
       prismaImports.push(`import type { Prisma } from '${prismaClientPath}';`);
     }
 

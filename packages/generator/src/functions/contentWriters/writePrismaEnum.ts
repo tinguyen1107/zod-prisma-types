@@ -34,7 +34,7 @@ export const writePrismaEnum = (
     if (name === 'JsonNullValueInput') {
       writer
         .conditionalWrite(
-          useMultipleFiles && !isPrismaClientGenerator,
+          useMultipleFiles && prismaVersion?.major !== 6,
           `import { Prisma } from '${prismaClientPath}';`,
         )
         .conditionalWrite(
@@ -43,14 +43,16 @@ export const writePrismaEnum = (
             prismaVersion?.major === 6,
           `import { objectEnumValues } from '${prismaLibraryPath}';`,
         )
-        .conditionalWrite(
-          useMultipleFiles &&
-            isPrismaClientGenerator &&
-            (prismaVersion?.major ?? 0) >= 7,
-          `import { NullTypes } from '${prismaClientPath}/runtime/client';`,
-        )
+        // .conditionalWrite(
+        //   useMultipleFiles &&
+        //     isPrismaClientGenerator &&
+        //     (prismaVersion?.major ?? 0) >= 7,
+        //   `import { NullTypes } from '${prismaLibraryPath}';`,
+        // )
         .blankLine()
-        .write(`export const ${name}Schema = z.enum([`);
+        .write(
+          `export const ${name}Schema: z.ZodType<Prisma.${name}> = z.enum([`,
+        );
       values.forEach((value) => {
         writer.write(`'${value}',`);
       });
@@ -59,8 +61,6 @@ export const writePrismaEnum = (
 
       if (isPrismaClientGenerator && prismaVersion?.major === 6) {
         jsonNullTypeName = 'objectEnumValues.instances.JsonNull';
-      } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-        jsonNullTypeName = 'NullTypes.JsonNull';
       } else {
         jsonNullTypeName = 'Prisma.JsonNull';
       }
@@ -75,7 +75,7 @@ export const writePrismaEnum = (
     if (name === 'NullableJsonNullValueInput') {
       writer
         .conditionalWrite(
-          useMultipleFiles && !isPrismaClientGenerator,
+          useMultipleFiles && prismaVersion?.major !== 6,
           `import { Prisma } from '${prismaClientPath}';`,
         )
         .conditionalWrite(
@@ -84,14 +84,16 @@ export const writePrismaEnum = (
             prismaVersion?.major === 6,
           `import { DbNull, JsonNull } from '${prismaLibraryPath}';`,
         )
-        .conditionalWrite(
-          useMultipleFiles &&
-            isPrismaClientGenerator &&
-            (prismaVersion?.major ?? 0) >= 7,
-          `import { NullTypes } from '${prismaClientPath}/runtime/client';`,
-        )
+        // .conditionalWrite(
+        //   useMultipleFiles &&
+        //     isPrismaClientGenerator &&
+        //     (prismaVersion?.major ?? 0) >= 7,
+        //   `import { NullTypes } from '${prismaLibraryPath}';`,
+        // )
         .blankLine()
-        .write(`export const ${name}Schema = z.enum([`);
+        .write(
+          `export const ${name}Schema: z.ZodType<Prisma.${name}> = z.enum([`,
+        );
       values.forEach((value) => {
         writer.write(`'${value}',`);
       });
@@ -99,8 +101,6 @@ export const writePrismaEnum = (
       let jsonNullTypeName = '';
       if (isPrismaClientGenerator && prismaVersion?.major === 6) {
         jsonNullTypeName = 'objectEnumValues.instances.JsonNull';
-      } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-        jsonNullTypeName = 'NullTypes.JsonNull';
       } else {
         jsonNullTypeName = 'Prisma.JsonNull';
       }
@@ -108,11 +108,14 @@ export const writePrismaEnum = (
       let dbNullTypeName = '';
       if (isPrismaClientGenerator && prismaVersion?.major === 6) {
         dbNullTypeName = 'objectEnumValues.instances.DbNull';
-      } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-        dbNullTypeName = 'NullTypes.DbNull';
       } else {
         dbNullTypeName = 'Prisma.DbNull';
       }
+
+      // if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
+      //   writer.write(`])`);
+      //   return;
+      // }
 
       writer.write(
         `]).transform((value) => value === 'JsonNull' ? ${jsonNullTypeName} : value === 'DbNull' ? ${dbNullTypeName} : value);`,
@@ -123,7 +126,7 @@ export const writePrismaEnum = (
     if (name === 'JsonNullValueFilter') {
       writer
         .conditionalWrite(
-          useMultipleFiles && !isPrismaClientGenerator,
+          useMultipleFiles && prismaVersion?.major !== 6,
           `import { Prisma } from '${prismaClientPath}';`,
         )
         .conditionalWrite(
@@ -132,14 +135,16 @@ export const writePrismaEnum = (
             prismaVersion?.major === 6,
           `import { objectEnumValues } from '${prismaLibraryPath}';`,
         )
-        .conditionalWrite(
-          useMultipleFiles &&
-            isPrismaClientGenerator &&
-            (prismaVersion?.major ?? 0) >= 7,
-          `import { NullTypes } from '${prismaClientPath}/runtime/client';`,
-        )
+        // .conditionalWrite(
+        //   useMultipleFiles &&
+        //     isPrismaClientGenerator &&
+        //     (prismaVersion?.major ?? 0) >= 7,
+        //   `import { NullTypes } from '${prismaLibraryPath}';`,
+        // )
         .blankLine()
-        .write(`export const ${name}Schema = z.enum([`);
+        .write(
+          `export const ${name}Schema: z.ZodType<Prisma.${name}> = z.enum([`,
+        );
       values.forEach((value) => {
         writer.write(`'${value}',`);
       });
@@ -147,8 +152,6 @@ export const writePrismaEnum = (
       let jsonNullTypeName = '';
       if (isPrismaClientGenerator && prismaVersion?.major === 6) {
         jsonNullTypeName = 'objectEnumValues.instances.JsonNull';
-      } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-        jsonNullTypeName = 'NullTypes.JsonNull';
       } else {
         jsonNullTypeName = 'Prisma.JsonNull';
       }
@@ -156,8 +159,6 @@ export const writePrismaEnum = (
       let anyNullTypeName = '';
       if (isPrismaClientGenerator && prismaVersion?.major === 6) {
         anyNullTypeName = 'objectEnumValues.instances.AnyNull';
-      } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-        anyNullTypeName = 'NullTypes.AnyNull';
       } else {
         anyNullTypeName = 'Prisma.AnyNull';
       }
@@ -165,11 +166,14 @@ export const writePrismaEnum = (
       let dbNullTypeName = '';
       if (isPrismaClientGenerator && prismaVersion?.major === 6) {
         dbNullTypeName = 'objectEnumValues.instances.DbNull';
-      } else if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
-        dbNullTypeName = 'NullTypes.DbNull';
       } else {
         dbNullTypeName = 'Prisma.DbNull';
       }
+
+      // if (isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7) {
+      //   writer.write(`])`);
+      //   return;
+      // }
 
       writer.write(
         `]).transform((value) => value === 'JsonNull' ? ${jsonNullTypeName} : value === 'DbNull' ? ${dbNullTypeName} : value === 'AnyNull' ? ${anyNullTypeName} : value);`,
@@ -184,7 +188,9 @@ export const writePrismaEnum = (
       //   `import transformJsonNull from './transformJsonNull'`,
       // )
       // .blankLine()
-      .write(`export const ${name}Schema = z.enum([`);
+      .write(
+        `export const ${name}Schema: z.ZodType<Prisma.${name}> = z.enum([`,
+      );
     values.forEach((value) => {
       writer.write(`'${value}',`);
     });
