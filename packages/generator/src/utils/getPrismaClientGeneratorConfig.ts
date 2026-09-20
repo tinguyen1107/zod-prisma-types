@@ -1,7 +1,20 @@
 import type { GeneratorOptions } from '@prisma/generator-helper';
 import path from 'path';
+import { getPackageVersion } from './getPackageVersion';
+
+const getPrismaClientPath = (
+  prismaClientPath: string | string[] | undefined,
+) => {
+  if (typeof prismaClientPath === 'string') {
+    return prismaClientPath;
+  }
+
+  return prismaClientPath?.join('/');
+};
 
 export const getPrismaClientGeneratorConfig = (options: GeneratorOptions) => {
+  const prismaVersion = getPackageVersion('@prisma/client');
+
   // find the prisma client config
   const prismaClientOptions = options.otherGenerators.find(
     (g) =>
@@ -12,15 +25,18 @@ export const getPrismaClientGeneratorConfig = (options: GeneratorOptions) => {
   const isPrismaClientGenerator =
     prismaClientOptions?.provider.value === 'prisma-client';
 
-  const prismaLibraryPath = prismaClientOptions?.previewFeatures.includes(
-    'queryCompiler',
-  )
-    ? '@prisma/client/runtime/client'
-    : '@prisma/client/runtime/library';
+  let prismaLibraryPath = '';
+
+  if (prismaClientOptions?.previewFeatures.includes('queryCompiler')) {
+    prismaLibraryPath = '@prisma/client/runtime/client';
+  } else {
+    prismaLibraryPath = '@prisma/client/runtime/library';
+  }
 
   const baseOptions = {
     isPrismaClientGenerator,
     prismaLibraryPath,
+    prismaVersion,
   };
 
   // check if custom output is used on generator or prisma client
@@ -35,18 +51,35 @@ export const getPrismaClientGeneratorConfig = (options: GeneratorOptions) => {
   // if so this path is used instead of the automatically located path
 
   if (options.generator.config?.['prismaClientPath']) {
+    const prismaClientPath = getPrismaClientPath(
+      options.generator.config?.['prismaClientPath'],
+    );
+
+    if (prismaClientPath && (prismaVersion?.major ?? 0) >= 7) {
+      return {
+        ...baseOptions,
+        prismaClientPath: prismaClientPath.concat('/client'),
+      };
+    }
+
     return {
       ...baseOptions,
-      prismaClientPath: options.generator.config?.['prismaClientPath'],
+      prismaClientPath,
     };
   }
 
   // get the relative path to the prisma schema
   const prismaClientPath = path
     .relative(options.generator.output.value, prismaClientOptions.output.value)
-    .replace(/\\/g, '/');
+    .replace(/\\/g, '/')
+    .concat('/client');
 
-  if (!prismaClientPath) return baseOptions;
+  prismaLibraryPath = path
+    .relative(options.generator.output.value, prismaClientOptions.output.value)
+    .replace(/\\/g, '/')
+    .concat('/internal/prismaNamespace');
+
+  if (!prismaClientPath) return { ...baseOptions, prismaLibraryPath };
 
   // if multiple files are used the path needs to add one level up
   // because the schemas are generated in subfolders of the output path
@@ -54,6 +87,7 @@ export const getPrismaClientGeneratorConfig = (options: GeneratorOptions) => {
     return {
       ...baseOptions,
       prismaClientPath: `../${prismaClientPath}`,
+      prismaLibraryPath: `../${prismaLibraryPath}`,
     };
   }
 

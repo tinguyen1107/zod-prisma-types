@@ -52,8 +52,12 @@ export const writeSpecialType: WriteTypeFunction<WriteTypeOptions> = (
         .write(`z.string().array(),`)
         .conditionalWrite(decimalJSInstalled, `z.instanceof(Decimal).array(),`)
         .conditionalWrite(
-          isPrismaClientGenerator,
+          isPrismaClientGenerator && (prismaVersion?.major ?? 0) === 6,
           `z.instanceof(PrismaDecimal).array(),`,
+        )
+        .conditionalWrite(
+          isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7,
+          `z.instanceof(Prisma.Decimal).array(),`,
         )
         .conditionalWrite(
           !isPrismaClientGenerator,
@@ -79,7 +83,14 @@ export const writeSpecialType: WriteTypeFunction<WriteTypeOptions> = (
       .write(`z.number(),`)
       .write(`z.string(),`)
       .conditionalWrite(decimalJSInstalled, `z.instanceof(Decimal),`)
-      .conditionalWrite(isPrismaClientGenerator, `z.instanceof(PrismaDecimal),`)
+      .conditionalWrite(
+        isPrismaClientGenerator && (prismaVersion?.major ?? 0) === 6,
+        `z.instanceof(PrismaDecimal),`,
+      )
+      .conditionalWrite(
+        isPrismaClientGenerator && (prismaVersion?.major ?? 0) >= 7,
+        `z.instanceof(Prisma.Decimal),`,
+      )
       .conditionalWrite(
         !isPrismaClientGenerator,
         `z.instanceof(Prisma.Decimal),`,
@@ -110,8 +121,9 @@ export const writeSpecialType: WriteTypeFunction<WriteTypeOptions> = (
   if (inputType.isBytesType) {
     return writer
       .conditionalWrite(
-        prismaVersion?.major === 6 || prismaVersion === undefined,
-        `z.instanceof(Uint8Array<ArrayBufferLike>)`,
+        (prismaVersion?.major && prismaVersion.major >= 6) ||
+          prismaVersion === undefined,
+        `z.instanceof(Uint8Array<ArrayBuffer>)`,
       )
       .conditionalWrite(
         prismaVersion?.major === 5 || prismaVersion?.major === 4,

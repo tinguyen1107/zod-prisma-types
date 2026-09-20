@@ -35,29 +35,32 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\""
   },
   "devDependencies": {
-    "@prisma/internals": "^6.16.3",
-    "@types/lodash": "^4.17.20",
-    "@typescript-eslint/eslint-plugin": "^8.45.0",
-    "@typescript-eslint/parser": "^8.45.0",
+    "@prisma/client": "^7.3.0",
+    "@prisma/internals": "^7.3.0",
+    "@types/lodash": "^4.17.23",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.2",
     "eslint-config-universe": "^14.3.0",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-prettier": "^5.5.4",
-    "prettier": "^3.6.2",
-    "typescript": "^5.9.2",
+    "eslint-plugin-prettier": "^5.5.5",
+    "prettier": "^3.8.1",
+    "prisma": "^7.3.0",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@prisma/dmmf": "^6.16.3",
-    "@prisma/generator-helper": "^6.16.3",
+    "@prisma/client-runtime-utils": "^7.3.0",
+    "@prisma/dmmf": "^7.3.0",
+    "@prisma/generator-helper": "^7.3.0",
     "code-block-writer": "^13.0.3",
-    "lodash": "^4.17.21",
-    "zod": "^4.1.11"
+    "lodash": "^4.17.23",
+    "zod": "^4.3.6"
   },
   "peerDependencies": {
-    "@prisma/client": "^4.x.x || ^5.x.x || ^6.x.x",
-    "prisma": "^4.x.x || ^5.x.x || ^6.x.x",
+    "@prisma/client": "^4.x.x || ^5.x.x || ^6.x.x || ^7.x.x",
+    "prisma": "^4.x.x || ^5.x.x || ^6.x.x || ^7.x.x",
     "zod": "^3.25.0 || ^4.0.0"
   }
 }

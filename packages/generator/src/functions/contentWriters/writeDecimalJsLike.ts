@@ -11,20 +11,25 @@ export const writeDecimalJsLike = ({
     prismaClientPath,
     prismaLibraryPath,
     isPrismaClientGenerator,
+    prismaVersion,
   } = getConfig();
 
   if (useMultipleFiles && !getSingleFileContent) {
     writeZodImport(writeImport);
-    if (isPrismaClientGenerator) {
+    if (isPrismaClientGenerator && prismaVersion?.major === 6) {
       writeImport('type { DecimalJsLike }', `${prismaLibraryPath}`);
     } else {
       writeImport('type { Prisma }', `${prismaClientPath}`);
     }
   }
 
-  const decimalJsLikeTypeName = isPrismaClientGenerator
-    ? 'DecimalJsLike'
-    : 'Prisma.DecimalJsLike';
+  let decimalJsLikeTypeName = '';
+
+  if (isPrismaClientGenerator && prismaVersion?.major === 6) {
+    decimalJsLikeTypeName = 'DecimalJsLike';
+  } else {
+    decimalJsLikeTypeName = 'Prisma.DecimalJsLike';
+  }
 
   writer
     .blankLine()

@@ -2,15 +2,18 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
+  provider        = "prisma-client"
   output          = "../generated/client"
   previewFeatures = ["views"]
+  moduleFormat    = "esm"
+  
+  // engineType      = "client"
   // previewFeatures = ["views"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // url      = env("DATABASE_URL")
 }
 
 // GENERATOR CONFIGURATION
@@ -37,6 +40,7 @@ generator zod {
   // prismaClientPath                 = "./generated/client" // optional
   useTypeAssertions                = false // default is false
   useExactOptionalPropertyTypes    = true // default is false
+  // prismaClientPath                 = "@acme/db" // optional
 }
 
 // MIXED CASE ENUMS AND MODELS
@@ -124,7 +128,7 @@ model MyPrismaScalarsType {
   json               Json
   jsonOpt            Json?
   jsonCustom         Json? /// @zod.custom.use(z.object({contents: z.array(z.object({locale: z.string(), content: z.string()}))}))
-  bytes              Bytes /// @zod.custom.use(z.instanceof(Buffer).refine((val) => val ? true : false, { message: 'Value is not valid' }))
+  bytes              Bytes /// @zod.custom.use(z.instanceof(Uint8Array<ArrayBuffer>).refine((val) => val ? true : false, { message: 'Value is not valid' }))
   bytesOpt           Bytes?
   /// @zod.import(["import { myFunction } from "../../../../utils/myFunction";"]).custom.use(z.string().refine((val) => myFunction(val), { message: 'Is not valid' }))
   custom             String?
